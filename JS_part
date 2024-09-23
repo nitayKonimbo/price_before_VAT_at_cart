@@ -1,0 +1,60 @@
+<script>
+$(document).ready(function () {
+  try {
+    if ($(".layout_order").length) {
+      creatPriceVatLine();
+
+      updatePriceVat();
+      $('#order_num_of_payments').change( function(){
+          updatePriceVat();
+      });
+      $('#order_shipping_option_id').change( function(){
+          updatePriceVat();
+      });
+    }
+  } catch (error) {
+    console.error("Error in לפני מעמ בדף עגלה:", error);
+  }
+});
+
+function creatPriceVatLine() {
+  if (!$(".layout_order .summery").length) {
+    console.log("Error, creatPriceVatLine got the wrong page");
+    return;
+  }
+
+  let shippingText = $('.include_shipping_text').length ? '<span class="include_shipping_text">, כולל משלוח</span>' : "";
+  let dynamicPaymentsWithoutVat = $('.dynamic_payments').length ? '<span id="dynamic_payments_without_vat" class=""></span>' : "";
+  let currency = $('.currency').text().trim();
+
+  let elementPriceWithoutVat = `
+    <b>
+      סה"כ ללא מע"מ ${shippingText}:
+      ${dynamicPaymentsWithoutVat}
+      <span class="">${currency}</span>
+    </b>
+  `;
+
+  $(".layout_order .summery .currency").after(elementPriceWithoutVat);
+}
+
+function updatePriceVat() {
+  let equationText = $(".dynamic_payments").text();
+
+  // Use regex to extract the numbers from the text
+  let regex = /(\d+)x([\d,.]+)/;
+  let matches = equationText.match(regex);
+
+  if (matches) {
+    let quantity = parseInt(matches[1]);
+    let pricePerItem = parseFloat(matches[2].replace(/,/g, ''));
+    let modifiedPrice = Math.round((pricePerItem / {{var.vat_amount}}) * 100) / 100;;
+    let newTotal = (quantity * modifiedPrice).toFixed(2);
+    let newText = `${quantity}x${modifiedPrice.toFixed(2)} = ${newTotal}`;
+    $("#dynamic_payments_without_vat").text(newText);
+  } else {
+    console.log("Equation not found in .dynamic_payments");
+  }
+}
+
+</script>
