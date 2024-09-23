@@ -1,0 +1,11 @@
+<vars>
+  <var>
+    <label>תוספת המע"מ</label>
+    <name>vat_amount</name>
+    <type>text</type>
+    <value>1.17</value>
+    <tab>משתנים</tab>
+    <tip>אם המעמ 17% צריך לכתוב 1.17
+    אם המעמ 18% אז 1.18</tip>
+</var>
+</vars>
